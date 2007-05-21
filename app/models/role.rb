@@ -8,6 +8,19 @@ class Role < ActiveRecord::Base
   validates_length_of     :name,
                             :minimum => 1
   
+  class << self
+    # Finds all roles that are authorized for the given url
+    def authorized_for(options = '')
+      controller_path, action = Controller.recognize_path(options)
+      controller = Controller.new(:path => controller_path)
+      
+      find(:all,
+        :include => {:permissions => :controller},
+        :conditions => ['path IN (?) AND (action IS NULL OR action = ?)', controller.possible_path_matches, action]
+      )
+    end
+  end
+  
   def to_s #:nodoc
     name
   end

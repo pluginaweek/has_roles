@@ -36,6 +36,15 @@ class Controller < ActiveRecord::Base
         end
       end
     end
+    
+    # Parses the controller path and action from the given options
+    def recognize_path(options = '')
+      options = ActionController::Routing::Routes.recognize_path(URI.parse(options).path) if options.is_a?(String)
+      controller_path, action = options[:controller], options[:action].to_s
+      controller_path = controller_path.controller_path if controller_path.is_a?(Class)
+      
+      return controller_path, action
+    end
   end
   
   # Returns the class that this controller represents

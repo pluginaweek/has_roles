@@ -10,4 +10,12 @@ class Permission < ActiveRecord::Base
                             :if => :action?
   validates_uniqueness_of :action,
                             :scope => :controller_id
+  
+  class << self
+    # Is there a permission that exists which restricts the given url?
+    def restricts?(options = '')
+      controller_path, action = Controller.recognize_path(options)
+      !Permission.find(:first, :include => :controller, :conditions => ['path = ? AND (action IS NULL OR action = ?)', controller_path, action]).nil?
+    end
+  end
 end
