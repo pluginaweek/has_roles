@@ -17,9 +17,20 @@ module PluginAWeek #:nodoc:
       end
       
       module InstanceMethods
-        # Checks whether this user is authorized to access the given url
+        # Checks whether this user is authorized to access the given url.
+        # Caching of authorizations is baked into the method.  So long as the
+        # same user object is used, an authorization for the same path will be
+        # cached and returned.
+        # 
+        # The side effect of this type of caching is that if the user loses any
+        # permissions while logged in, it won't be realized until the user logs
+        # out.
         def authorized_for?(options = '')
-          Permission.restricts?(options) ? roles.authorized_for(options).any? : true
+          @authorizations ||= {}
+          
+          controller_path, action = Controller.recognize_path(options)
+          options = {:controller => controller_path, :action => action}
+          @authorizations["#{controller_path}/#{action}"] ||= Permission.restricts?(options) ? roles.authorized_for(options).any? : true
         end
       end
     end
