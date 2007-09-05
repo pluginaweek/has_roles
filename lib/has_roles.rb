@@ -13,7 +13,8 @@ module PluginAWeek #:nodoc:
         def has_roles
           has_many  :role_assignments,
                       :class_name => 'RoleAssignment',
-                      :as => :assignee
+                      :as => :assignee,
+                      :dependent => :destroy
           has_many  :roles,
                       :through => :role_assignments
           
@@ -35,6 +36,24 @@ module PluginAWeek #:nodoc:
           controller_path, action = Controller.recognize_path(options)
           options = {:controller => controller_path, :action => action}
           @authorizations["#{controller_path}/#{action}"] ||= Permission.restricts?(options) ? roles.find_all_authorized_for(options).any? : true
+        end
+        
+        # Gets the ids of all roles associated with this user
+        def role_ids
+          roles.map(&:id)
+        end
+        
+        # Sets the topics to associate with this fact.
+        def role_ids=(ids)
+          removed_ids = role_ids - ids
+          new_ids = ids - role_ids
+          
+          transaction do
+            role_assignments.delete(role_assignments.select {|assignment| removed_ids.include?(assignment.role_id)})
+            new_ids.each {|id| role_assignments.create!(:role_id => id)}
+          end
+          
+          roles.reload
         end
       end
     end
