@@ -1,5 +1,8 @@
-# Represents the name of a controller in the code.  The name of the controller
-# includes its namespace, if any.
+# Represents the name of a controller in the application.  The path of the controller
+# includes its namespace, if any.  For example:
+# 
+#   users       # => UsersController
+#   admin/users # => Admin::UsersController
 class Controller < ActiveRecord::Base
   has_many  :permissions,
               :dependent => :destroy
@@ -59,7 +62,8 @@ class Controller < ActiveRecord::Base
     @name ||= klass.controller_name.titleize
   end
   
-  # Possible paths that can match this controller
+  # Possible paths that can match this controller.  This includes paths from all
+  # superclasses up to ApplicationController.
   def possible_path_matches
     klass.ancestors.select {|c| Class === c && c < ActionController::Base}.map(&:controller_path)
   end

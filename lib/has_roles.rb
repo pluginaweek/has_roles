@@ -1,3 +1,5 @@
+require 'has_roles/authorization_helper'
+
 module PluginAWeek #:nodoc:
   module Has #:nodoc:
     # Provides dead simple role management
@@ -24,6 +26,9 @@ module PluginAWeek #:nodoc:
         # Caching of authorizations is baked into the method.  So long as the
         # same user object is used, an authorization for the same path will be
         # cached and returned.
+        # 
+        # See +Controller#recognize_path+ for more information about the possible
+        # +options+ that can be used.
         def authorized_for?(options = '')
           @authorizations ||= {}
           

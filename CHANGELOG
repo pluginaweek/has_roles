@@ -1,3 +1,11 @@
 *SVN*
 
+*0.0.1* (September 5th, 2007)
+
+* Added documentation
+
+* Added helper methods for determining authorization within views
+
+* Added unit tests
+
 * Convert dos newlines to unix newlines
