@@ -55,12 +55,12 @@ more information.
 To migrate the tables required for user_authentication, you can either run the
 migration from the command line like so:
 
-  rake db:migrate:plugins PLUGIN=user_authentication
+  rake db:migrate:plugins PLUGIN=has_roles
 
 or (more ideally) generate a migration file that will integrate into your main
 application's migration path:
 
-  ruby script/generate plugin_migration MigrateUserAuthenticationToVersion1
+  ruby script/generate plugin_migration MigrateHasRolesToVersion5
 
 == Dependencies
 
@@ -74,7 +74,7 @@ must have the following plugins/gems installed:
 Instead of installing each individual plugin+ feature, you can install them all
 at once using the plugins+ meta package, which contains all additional
 plugin features:
-* plugin_plus - http://wiki.pluginaweek.org/Plugins_plus
+* plugin_plus[http://wiki.pluginaweek.org/Plugins_plus]
 
 Alternatively, if you don't want to install any plugin+ features, you can copy
 all relevant controllers/models/migrations/etc. from the plugin into your core
