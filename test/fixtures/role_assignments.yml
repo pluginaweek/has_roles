@@ -1,0 +1,17 @@
+administrator:
+  id: 1
+  role_id: 1
+  assignee_id: 1
+  assignee_type: User
+  
+moderator:
+  id: 2
+  role_id: 2
+  assignee_id: 2
+  assignee_type: User
+  
+guest:
+  id: 3
+  role_id: 3
+  assignee_id: 3
+  assignee_type: User

@@ -1,0 +1,11 @@
+administrator:
+  id: 1
+  name: Administrator
+  
+moderator:
+  id: 2
+  name: Moderator
+  
+guest:
+  id: 3
+  name: Guest

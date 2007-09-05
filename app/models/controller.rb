@@ -6,26 +6,28 @@ class Controller < ActiveRecord::Base
   
   validates_presence_of   :path
   validates_format_of     :path,
-                            :with => /\A[a-z\/]\Z/i
-  validates_uniqueness_of :path
-  validates_length_of     :path,
-                            :minimum => 1
+                            :with => /^[a-z]+(\/[a-z]+)*$/i,
+                            :allow_nil => true
+  validates_uniqueness_of :path,
+                            :allow_nil => true
   
   class << self
-    # 
-    def ordered_by_parent
+    # Finds all of the permissioned controllers and maps/orders them by parent
+    def find_all_mapped_by_parent
       controllers_by_parent = Controller.find(:all).inject(ActiveSupport::OrderedHash.new) do |controllers, controller|
         controller.klass.parents.each {|parent| controllers[parent] ||= []}
         controllers[controller.klass.parent] << controller
         controllers
       end
       
+      # Sort all the controllers within each parent alphabetically
       controllers_by_parent.each do |parent, controllers|
         controllers.sort! do |c1, c2|
           c1.name <=> c2.name
         end
       end
       
+      # Sort the parents (first by closest to Object, then alphabetically)
       controllers_by_parent.sort! do |c1, c2|
         if c1.first == Object
           -1
@@ -40,10 +42,10 @@ class Controller < ActiveRecord::Base
     # Parses the controller path and action from the given options
     def recognize_path(options = '')
       options = ActionController::Routing::Routes.recognize_path(URI.parse(options).path) if options.is_a?(String)
-      controller_path, action = options[:controller], options[:action].to_s
+      controller_path, action = options[:controller], options[:action]
       controller_path = controller_path.controller_path if controller_path.is_a?(Class)
       
-      return controller_path, action
+      return controller_path, action ? action.to_s : 'index'
     end
   end
   
@@ -64,7 +66,7 @@ class Controller < ActiveRecord::Base
   
   # Is this a global controller?  If a user has a permission on the global
   # controller, then he has permissions on all controllers.  At least one user
-  # in the system must have global access.
+  # in the system should have global access.
   def global?
     path == 'application'
   end

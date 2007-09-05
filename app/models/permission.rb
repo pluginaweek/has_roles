@@ -1,5 +1,10 @@
-# A permission is a single collection of actions, controllers, and views that
-# allow a user to gain access to a feature in the application.
+# A permission defines access to a single part of an application, restricted by
+# both controller and action specifications.
+# 
+# Permissions can be application-, controller-, or action-specific.  Permissions
+# using the +application+ controller are global.  Permissions without any +action+
+# specified are controller-specific.  Permissions with both +controller+ and
+# +action+ specified are action-specific.
 class Permission < ActiveRecord::Base
   belongs_to              :controller
   has_and_belongs_to_many :roles
@@ -7,19 +12,25 @@ class Permission < ActiveRecord::Base
   validates_presence_of   :controller_id
   validates_length_of     :action,
                             :minimum => 1,
-                            :if => :action?
+                            :allow_nil => true
   validates_uniqueness_of :action,
-                            :scope => :controller_id
+                            :scope => :controller_id,
+                            :allow_nil => true
   
   class << self
-    # Is there a permission that exists which restricts the given url?
+    # Is there a permission that exists which restricts the given url?.  See
+    # +Controller#recognize_path+ for possible options.
     def restricts?(options = '')
       controller_path, action = Controller.recognize_path(options)
-      !Permission.find(:first, :include => :controller, :conditions => ['path = ? AND (action IS NULL OR action = ?)', controller_path, action]).nil?
+      count(
+        :include => :controller,
+        :conditions => ['path = ? AND (action IS NULL OR action = ?)', controller_path, action]
+      ) > 0
     end
     
-    # Finds all roles that are authorized for the given url
-    def authorized_for(options = '')
+    # Finds all permissions that are authorized for the given url.  See
+    # +Controller#recognize_path+ for possible options.
+    def find_all_authorized_for(options = '')
       controller_path, action = Controller.recognize_path(options)
       controller = Controller.new(:path => controller_path)
       

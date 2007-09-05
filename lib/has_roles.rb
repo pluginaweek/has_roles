@@ -9,8 +9,11 @@ module PluginAWeek #:nodoc:
       module MacroMethods
         # Indicates that the model has roles
         def has_roles
-          has_and_belongs_to_many :roles,
-                                    :foreign_key => 'user_id'
+          has_many  :role_assignments,
+                      :class_name => 'RoleAssignment',
+                      :as => :assignee
+          has_many  :roles,
+                      :through => :role_assignments
           
           include PluginAWeek::Has::Roles::InstanceMethods
         end
@@ -21,16 +24,12 @@ module PluginAWeek #:nodoc:
         # Caching of authorizations is baked into the method.  So long as the
         # same user object is used, an authorization for the same path will be
         # cached and returned.
-        # 
-        # The side effect of this type of caching is that if the user loses any
-        # permissions while logged in, it won't be realized until the user logs
-        # out.
         def authorized_for?(options = '')
           @authorizations ||= {}
           
           controller_path, action = Controller.recognize_path(options)
           options = {:controller => controller_path, :action => action}
-          @authorizations["#{controller_path}/#{action}"] ||= Permission.restricts?(options) ? roles.authorized_for(options).any? : true
+          @authorizations["#{controller_path}/#{action}"] ||= Permission.restricts?(options) ? roles.find_all_authorized_for(options).any? : true
         end
       end
     end

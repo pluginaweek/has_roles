@@ -1,0 +1,27 @@
+crud_application:
+  id: 1
+  controller_id: 1
+  
+read_application:
+  id: 2
+  controller_id: 1
+  action: index
+  
+read_users:
+  id: 3
+  controller_id: 2
+  action: index
+  
+update_users:
+  id: 4
+  controller_id: 2
+  action: update
+  
+crud_admin_users:
+  id: 5
+  controller_id: 3
+  
+create_pay_pal_payment_transactions:
+  id: 6
+  controller_id: 5
+  action: create
