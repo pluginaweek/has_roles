@@ -24,7 +24,8 @@ class Permission < ActiveRecord::Base
       controller_path, action = Controller.recognize_path(options)
       count(
         :include => :controller,
-        :conditions => ['path = ? AND (action IS NULL OR action = ?)', controller_path, action]
+        :conditions => ['path = ? AND (action IS NULL OR action = ?)', controller_path, action],
+        :distinct => true # TODO: Workaround for old sqlite versions until Rails 1.2
       ) > 0
     end
     

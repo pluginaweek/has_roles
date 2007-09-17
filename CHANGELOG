@@ -1,5 +1,7 @@
 *SVN*
 
+* Add workaround for old sqlite versions that can't handle :distinct => true
+
 *0.0.1* (September 5th, 2007)
 
 * Add #role_ids and #role_ids=(new_ids) for models

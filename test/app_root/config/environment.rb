@@ -21,6 +21,7 @@ Rails::Initializer.run do |config|
   ])
   config.plugins = [
     File.basename(File.expand_path("#{RAILS_ROOT}/../..")),
+    'loaded_plugins',
     'appable_plugins',
     'plugin_migrations',
     'dry_validity_assertions'
