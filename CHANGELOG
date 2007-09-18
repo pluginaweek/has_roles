@@ -1,5 +1,9 @@
 *SVN*
 
+*0.0.2* (September 18th, 2007)
+
+* Fix role_assignments unique index having too long a name
+
 * Add workaround for old sqlite versions that can't handle :distinct => true
 
 *0.0.1* (September 5th, 2007)
