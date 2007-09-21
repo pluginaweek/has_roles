@@ -19,7 +19,7 @@ class Permission < ActiveRecord::Base
   
   class << self
     # Is there a permission that exists which restricts the given url?.  See
-    # +Controller#recognize_path+ for possible options.
+    # <tt>Controller#recognize_path</tt> for possible options.
     def restricts?(options = '')
       controller_path, action = Controller.recognize_path(options)
       count(
@@ -30,7 +30,7 @@ class Permission < ActiveRecord::Base
     end
     
     # Finds all permissions that are authorized for the given url.  See
-    # +Controller#recognize_path+ for possible options.
+    # <tt>Controller#recognize_path</tt> for possible options.
     def find_all_authorized_for(options = '')
       controller_path, action = Controller.recognize_path(options)
       controller = Controller.new(:path => controller_path)

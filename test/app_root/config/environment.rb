@@ -7,12 +7,6 @@ rescue
 end
 
 Rails::Initializer.run do |config|
-  config.log_level = :debug
-  config.cache_classes = false
-  config.whiny_nils = true
-  config.breakpoint_server = true
-  config.load_paths << "#{RAILS_ROOT}/../../lib"
-  
   config.plugin_paths.concat([
     "#{RAILS_ROOT}/../../..",
     "#{RAILS_ROOT}/../../../../migrations",
@@ -20,12 +14,12 @@ Rails::Initializer.run do |config|
     "#{RAILS_ROOT}/../../../../../test"
   ])
   config.plugins = [
-    File.basename(File.expand_path("#{RAILS_ROOT}/../..")),
     'loaded_plugins',
     'appable_plugins',
     'plugin_migrations',
+    File.basename(File.expand_path("#{RAILS_ROOT}/../..")),
     'dry_validity_assertions'
   ]
+  config.cache_classes = false
+  config.whiny_nils = true
 end
-
-Dependencies.log_activity = true

@@ -7,7 +7,7 @@ module PluginAWeek #:nodoc:
       # In order to determine who the current user is, the helper methods
       # assume that a +current_user+ helper has been defined.  If this method
       # is not already defined, it will assume that the current user is stored
-      # in the session as +session['user']+.  If your application implements
+      # in the session as <tt>session['user']</tt>.  If your application implements
       # this differently, you can override it like so:
       # 
       #   module ApplicationHelper
@@ -27,7 +27,7 @@ module PluginAWeek #:nodoc:
         end
         
         # Check if the user is authorized for the url specified by the given options.
-        # See +Controller#recognize_path+ for a description of the possible
+        # See <tt>Controller#recognize_path</tt> for a description of the possible
         # options that can be passed in.
         def authorized_for?(options = {})
           current_user && current_user.authorized_for?(options)
