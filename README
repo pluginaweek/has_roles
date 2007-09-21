@@ -62,6 +62,12 @@ application's migration path:
 
   ruby script/generate plugin_migration MigrateHasRolesToVersion5
 
+== Testing
+
+Before you can run any tests, the following gems must be installed:
+* plugin_test_helper[http://wiki.pluginaweek.org/Plugin_test_helper]
+* dry_validity_assertions[http://wiki.pluginaweek.org/Dry_validity_assertions]
+
 == Dependencies
 
 This plugin is a plugin+.  That means that it contains a slice of an
