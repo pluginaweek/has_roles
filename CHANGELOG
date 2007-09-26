@@ -1,6 +1,6 @@
 *SVN*
 
-*0.0.2* (September 18th, 2007)
+*0.0.2* (September 26th, 2007)
 
 * Fix role_assignments unique index having too long a name
 
