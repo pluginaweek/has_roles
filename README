@@ -4,25 +4,25 @@
 
 == Resources
 
-API
+Announcement
 
-* http://api.pluginaweek.org/has_roles
+* http://www.pluginaweek.org
 
 Wiki
 
 * http://wiki.pluginaweek.org/Has_roles
 
-Announcement
+API
 
-* http://www.pluginaweek.org
-
-Source
-
-* http://svn.pluginaweek.org/trunk/plugins/active_record/has/has_roles
+* http://api.pluginaweek.org/has_roles
 
 Development
 
 * http://dev.pluginaweek.org/browser/trunk/plugins/active_record/has/has_roles
+
+Source
+
+* http://svn.pluginaweek.org/trunk/plugins/active_record/has/has_roles
 
 == Description
 
