@@ -1,12 +1,8 @@
 = has_roles
 
-+has_roles+ provides simple role management based on controllers/actions.
++has_roles+ demonstrates a reference implementation for handling role management.
 
 == Resources
-
-Announcement
-
-* http://www.pluginaweek.org
 
 Wiki
 
@@ -18,11 +14,11 @@ API
 
 Development
 
-* http://dev.pluginaweek.org/browser/trunk/plugins/active_record/has/has_roles
+* http://dev.pluginaweek.org/browser/trunk/has_roles
 
 Source
 
-* http://svn.pluginaweek.org/trunk/plugins/active_record/has/has_roles
+* http://svn.pluginaweek.org/trunk/has_roles
 
 == Description
 
@@ -33,51 +29,68 @@ more permissions.  Each permission is a combination of a controller and action.
 
 == Usage
 
+Note that this is a reference implementation and, most likely, should be
+modified for your own usage.
+
+=== Adding permissions
+
+To add permissions, you can either define your own Permission model or create
+an initializer like so:
+
+config/initializers/role_management:
+  Permission.create :id => 2, :controller => 'admin/stats'
+  Permission.create :id => 3, :controller => 'comments', :action => 'create'
+  ...
+
+=== Adding/Updating roles
+
+To add or update roles, you can either define your own Role model or create an
+initializer like so:
+
+config/initializers/role_management:
+  # Edit the default role called "administrator"
+  Role[:administrator].permissions << Permission['admin/stats']
+  
+  # Create a new role called "developer"
+  Role.create :id => 2, :name => 'developer', :permissions => [
+    Permission['comments', 'create'],
+    Permission['admin/stats'], 
+    ...
+  ]
+
+=== Default Permissions/Roles
+
+By default, the following permissions are define:
+* application - Permission for accessing any part of the application
+
+By default, the following roles are defined:
+* admin - An administrator with the default permissions
+
+You can get rid of the default permissions/roles by adding the following to your
+role_management initializer:
+
+config/initializers/role_management:
+  Role.destroy_all
+  Permission.destroy_all
+  ...
+
 === Checking a user's authorization
 
-Below is an example of checking a user's authorization for a url before display
+Below is an example of checking a user's authorization for a url before displaying
 information:
 
 app/views/layouts/application.rhtml:
 
-  <% if authorized_for?(:controller => 'admin/users') -%>
+  <% if authorized_for?(:controller => 'admin/users') %>
   <p>Read to start administering your website?</p>
-  <% end -%>
-
-=== Global authorization
-
-You can define a global permission that will add access for all controllers by
-defining a controller with the path 'application'.  See the test fixtures for
-more information.
-
-=== Running migrations
-
-To migrate the tables required for this plugin, you can either run the
-migration from the command line like so:
-
-  rake db:migrate:plugins PLUGIN=has_roles
-
-or (more ideally) generate a migration file that will integrate into your main
-application's migration path:
-
-  ruby script/generate plugin_migration has_roles
+  <% end %>
 
 == Testing
 
-Before you can run any tests, the following gems must be installed:
+Before you can run any tests, the following gem must be installed:
 * plugin_test_helper[http://wiki.pluginaweek.org/Plugin_test_helper]
-* dry_validity_assertions[http://wiki.pluginaweek.org/Dry_validity_assertions]
 
 == Dependencies
 
-This plugin is a plugin+.  That means that it contains a slice of an
-application, such as models and migrations.  To test or use a plugin+, you
-must have the following plugins/gems installed:
-* plugin_dependencies[http://wiki.pluginaweek.org/Plugin_dependencies]
-* loaded_plugins[http://wiki.pluginaweek.org/Loaded_plugins]
-* appable_plugins[http://wiki.pluginaweek.org/Appable_plugins]
-* plugin_migrations[http://wiki.pluginaweek.org/Plugin_migrations]
-
-Instead of installing each individual plugin+ feature, you can install them all
-at once using the plugins+[http://wiki.pluginaweek.org/Plugins_plus] meta package,
-which contains all additional features.
+* plugins_plus[http://wiki.pluginaweek.org/Plugins_plus]
+* acts_as_enumeration[http://wiki.pluginaweek.org/Acts_as_enumeration]

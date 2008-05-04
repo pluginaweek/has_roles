@@ -1,5 +1,19 @@
 *SVN*
 
+*0.1.0* (May 5th, 2008)
+
+* Add use of named_scope instead of class finders
+
+* Moved storage of controller paths into the Permission model
+
+* Permission and Role are now enumerations (adding dependency on acts_as_enumeration)
+
+* Removed unused helper methods in Permission and Role
+
+* Added default permissions / roles
+
+* Update documentation
+
 *0.0.2* (September 26th, 2007)
 
 * Fix role_assignments unique index having too long a name

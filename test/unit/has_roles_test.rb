@@ -1,49 +1,82 @@
-require "#{File.dirname(__FILE__)}/../test_helper"
+require File.dirname(__FILE__) + '/../test_helper'
 
-class HasRolesTest < Test::Unit::TestCase
-  fixtures :controllers, :permissions, :roles, :permissions_roles, :users, :role_assignments
-  
-  def test_should_have_role_assignments_association
-    assert_equal [role_assignments(:administrator)], users(:administrator).role_assignments
+class UserAfterBeingCreatedTest < Test::Unit::TestCase
+  def setup
+    @user = create_user
   end
   
-  def test_should_destroy_role_assignments_when_destroyed
-    users(:administrator).destroy
-    assert_nil RoleAssignment.find_by_assignee_id(1)
+  def test_should_not_have_any_role_assignments
+    assert @user.role_assignments.empty?
   end
   
-  def test_should_have_roles_association
-    assert_equal [roles(:administrator)], users(:administrator).roles
+  def test_should_not_have_any_roles
+    assert @user.roles.empty?
   end
-  
-  def test_should_be_authorized_if_user_has_proper_permissions
-    assert users(:guest).authorized_for?('/users/index')
-  end
-  
-  def test_should_not_be_authorized_if_user_doesnt_have_proper_permissions
-    assert !users(:guest).authorized_for?('/admin/users/destroy')
-  end
-  
-  def test_roles_ids_should_map_all_ids
-    assert_equal [1], users(:administrator).role_ids
-  end
-  
+end
 
-  def test_should_destroy_old_roles_when_replaced
-    user = users(:administrator)
-    user.role_ids = []
-    assert_equal [], user.roles
+class UserWithoutRoleAssignmentsTest < Test::Unit::TestCase
+  def setup
+    @user = create_user
   end
   
-  def test_should_add_new_roles_when_replaced
-    user = users(:administrator)
-    user.role_ids = [1, 2]
-    assert_equal [roles(:administrator), roles(:moderator)], user.roles
+  def test_should_be_authorized_if_path_is_not_permissioned
+    assert @user.authorized_for?('/users/create')
   end
   
-  def test_should_destroy_old_roles_and_add_new_roles_when_replaced
-    user = users(:administrator)
-    user.role_ids = [2]
-    assert_equal [roles(:moderator)], user.roles
+  def test_should_not_be_authorized_if_path_is_permissioned
+    create_permission(:controller => 'users', :action => 'create')
+    assert !@user.authorized_for?('/users/create')
+  end
+  
+  def teardown
+    Permission.destroy_all
+  end
+end
+
+class UserWithRoleAssignmentsTest < Test::Unit::TestCase
+  def setup
+    @user = create_user
+    @administrator = create_role(:name => 'administrator')
+    @administrator.permissions << create_permission(:controller => 'admin/users')
+    create_role_assignment(:assignee => @user, :role => @administrator)
+    
+    create_permission(:controller => 'users')
+  end
+  
+  def test_should_have_roles
+    assert_equal [@administrator], @user.roles
+  end
+  
+  def test_should_be_authorized_if_path_is_not_permissioned
+    assert @user.authorized_for?('')
+  end
+  
+  def test_should_be_authorized_if_role_has_permission
+    assert @user.authorized_for?('/admin/users')
+  end
+  
+  def test_should_not_be_authorized_if_no_roles_have_permission
+    assert !@user.authorized_for?('/users')
+  end
+  
+  def teardown
+    Role.destroy_all
+    Permission.destroy_all
+  end
+end
+
+class UserAfterBeingDestroyedTest < Test::Unit::TestCase
+  def setup
+    @user = create_user
+    @administrator = create_role_assignment(:assignee => @user)
+    @user.destroy
+  end
+  
+  def test_should_destroy_associated_role_assignments
+    assert_nil RoleAssignment.find_by_id(@administrator.id)
+  end
+  
+  def teardown
+    Role.destroy_all
   end
 end

@@ -1,13 +1,19 @@
-require "#{File.dirname(__FILE__)}/../test_helper"
+require File.dirname(__FILE__) + '/../test_helper'
 
 class AuthorizationHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::UrlHelper
-  include PluginAWeek::Has::Roles::AuthorizationHelper
-  
-  fixtures :controllers, :permissions, :roles, :permissions_roles, :users, :role_assignments
+  include PluginAWeek::HasRoles::AuthorizationHelper
   
   def setup
+    @user = create_user
+    
+    @developer = create_role(:name => 'developer')
+    @developer.permissions << create_permission(:controller => 'users')
+    create_role_assignment(:assignee => @user, :role => @developer)
+    
+    create_permission(:controller => 'admin/users')
+    
     @controller = HomeController.new
     @controller.request = ActionController::TestRequest.new
     @controller.instance_eval {@_params = request.path_parameters}
@@ -15,7 +21,7 @@ class AuthorizationHelperTest < Test::Unit::TestCase
   end
   
   def current_user
-    users(:guest)
+    @user
   end
   
   def test_should_be_authorized_if_user_has_proper_permissions
@@ -36,5 +42,10 @@ class AuthorizationHelperTest < Test::Unit::TestCase
   
   def test_should_link_to_url_if_authorized
     assert_equal '<a href="/users">Destroy User</a>', link_to_if_authorized('Destroy User', {:controller => 'users', :action => 'index'}, :show_text => false)
+  end
+  
+  def teardown
+    Role.destroy_all
+    Permission.destroy_all
   end
 end

@@ -1,29 +1,48 @@
-require "#{File.dirname(__FILE__)}/../test_helper"
+require File.dirname(__FILE__) + '/../test_helper'
+
+class RoleAssignmentByDefaultTest < Test::Unit::TestCase
+  def setup
+    @role_assignment = RoleAssignment.new
+  end
+  
+  def test_should_not_have_a_role
+    assert_nil @role_assignment.role_id
+  end
+  
+  def test_should_not_have_an_assignee
+    assert_nil @role_assignment.assignee_id
+  end
+  
+  def test_should_not_have_an_assignee_type
+    assert @role_assignment.assignee_type.blank?
+  end
+end
 
 class RoleAssignmentTest < Test::Unit::TestCase
-  fixtures :roles, :users, :role_assignments
-  
-  def test_should_be_valid
-    assert_valid role_assignments(:administrator)
+  def test_should_be_valid_with_a_valid_set_of_attributes
+    role_assignment = new_role_assignment
+    assert role_assignment.valid?
   end
   
-  def test_should_require_role_id
-    assert_invalid role_assignments(:administrator), :role_id, nil
+  def test_should_require_a_role
+    role_assignment = new_role_assignment(:role => nil)
+    assert !role_assignment.valid?
+    assert_equal 1, Array(role_assignment.errors.on(:role_id)).size
   end
   
-  def test_should_require_assignee_id
-    assert_invalid role_assignments(:administrator), :assignee_id, nil
+  def test_should_require_an_assignee_id
+    role_assignment = new_role_assignment(:assignee => nil)
+    assert !role_assignment.valid?
+    assert_equal 1, Array(role_assignment.errors.on(:assignee_id)).size
   end
   
-  def test_should_require_assignee_type
-    assert_invalid role_assignments(:administrator), :assignee_type, nil
+  def test_should_require_an_assignee_type
+    role_assignment = new_role_assignment(:assignee => nil)
+    assert !role_assignment.valid?
+    assert_equal 1, Array(role_assignment.errors.on(:assignee_type)).size
   end
   
-  def test_should_have_role_association
-    assert_equal roles(:administrator), role_assignments(:administrator).role
-  end
-  
-  def test_should_have_assignee_association
-    assert_equal users(:administrator), role_assignments(:administrator).assignee
+  def teardown
+    Role.destroy_all
   end
 end
