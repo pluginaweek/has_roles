@@ -56,8 +56,8 @@ end
 class RoleWithPermissionsTest < Test::Unit::TestCase
   def setup
     @role = new_role
-    @permission_create = create_permission(:controller => 'users', :action => 'create')
-    @permission_update = create_permission(:controller => 'users', :action => 'update')
+    @permission_create = create_permission(:id => 1, :controller => 'users', :action => 'create')
+    @permission_update = create_permission(:id => 2, :controller => 'users', :action => 'update')
     
     @role.permissions.concat([@permission_create, @permission_update])
     @role.save!
@@ -84,7 +84,7 @@ class RoleWithPermissionsTest < Test::Unit::TestCase
   end
   
   def test_should_authorize_for_a_controller
-    @role.permissions << create_permission(:controller => 'users')
+    @role.permissions << create_permission(:id => 3, :controller => 'users')
     assert @role.authorized_for?(:controller => 'users')
   end
   
@@ -101,7 +101,7 @@ class RoleWithPermissionsTest < Test::Unit::TestCase
   end
   
   def test_should_authorize_for_the_entire_application
-    @role.permissions << create_permission(:controller => 'application')
+    @role.permissions << create_permission(:id => 3, :controller => 'application')
     assert @role.authorized_for?(:controller => 'application')
   end
   
@@ -110,7 +110,7 @@ class RoleWithPermissionsTest < Test::Unit::TestCase
   end
   
   def test_should_authorize_if_permissioned_for_superclass_controller
-    @role.permissions << create_permission(:controller => 'admin/base')
+    @role.permissions << create_permission(:id => 3, :controller => 'admin/base')
     assert @role.authorized_for?('/admin/users')
   end
   

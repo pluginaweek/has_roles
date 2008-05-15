@@ -9,10 +9,10 @@ class AuthorizationHelperTest < Test::Unit::TestCase
     @user = create_user
     
     @developer = create_role(:name => 'developer')
-    @developer.permissions << create_permission(:controller => 'users')
+    @developer.permissions << create_permission(:id => 1, :controller => 'users')
     create_role_assignment(:assignee => @user, :role => @developer)
     
-    create_permission(:controller => 'admin/users')
+    create_permission(:id => 2, :controller => 'admin/users')
     
     @controller = HomeController.new
     @controller.request = ActionController::TestRequest.new

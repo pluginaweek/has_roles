@@ -37,10 +37,10 @@ class UserWithRoleAssignmentsTest < Test::Unit::TestCase
   def setup
     @user = create_user
     @administrator = create_role(:name => 'administrator')
-    @administrator.permissions << create_permission(:controller => 'admin/users')
+    @administrator.permissions << create_permission(:id => 1, :controller => 'admin/users')
     create_role_assignment(:assignee => @user, :role => @administrator)
     
-    create_permission(:controller => 'users')
+    create_permission(:id => 2, :controller => 'users')
   end
   
   def test_should_have_roles
