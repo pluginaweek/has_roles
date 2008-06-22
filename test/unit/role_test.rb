@@ -136,19 +136,3 @@ class RoleWithAssignmentsTest < Test::Unit::TestCase
     Role.destroy_all
   end
 end
-
-class RoleAfterBeingDestroyedTest < Test::Unit::TestCase
-  def setup
-    @role = create_role
-    @administrator = create_role_assignment(:role => @role)
-    @role.destroy
-  end
-  
-  def test_should_destroy_associated_assignments
-    assert_nil RoleAssignment.find_by_id(@administrator.id)
-  end
-  
-  def teardown
-    Role.destroy_all
-  end
-end

@@ -26,11 +26,11 @@ module PluginAWeek #:nodoc:
       # 
       # == Examples
       # 
-      # u = User.find(1)
-      # u.authorized_for?(:controller => 'admin/messages')
-      # u.authorized_for?(:controller => 'admin/messages', :action => 'destroy')
-      # u.authorized_for?('admin/messages')
-      # u.authorized_for?('http://localhost:3000/admin/messages')
+      #   user = User.find(1)
+      #   user.authorized_for?(:controller => 'admin/messages')
+      #   user.authorized_for?(:controller => 'admin/messages', :action => 'destroy')
+      #   user.authorized_for?('admin/messages')
+      #   user.authorized_for?('http://localhost:3000/admin/messages')
       def authorized_for?(options = '')
         !Permission.restricts?(options) || roles.any? {|role| role.authorized_for?(options)}
       end

@@ -7,8 +7,7 @@ class Role < ActiveRecord::Base
   attr_accessor :permissions
   
   has_many  :assignments,
-              :class_name => 'RoleAssignment',
-              :dependent => :destroy
+              :class_name => 'RoleAssignment'
   
   def initialize(attributes = nil) #:nodoc:
     super
@@ -30,6 +29,6 @@ class Role < ActiveRecord::Base
   end
   
   create :id => 1, :name => 'admin', :permissions => [
-    Permission['application']
+    Permission['application/']
   ]
 end

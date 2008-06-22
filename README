@@ -49,12 +49,12 @@ initializer like so:
 
 config/initializers/role_management:
   # Edit the default role called "administrator"
-  Role[:administrator].permissions << Permission['admin/stats']
+  Role[:administrator].permissions << Permission['admin/stats/']
   
   # Create a new role called "developer"
   Role.create :id => 2, :name => 'developer', :permissions => [
-    Permission['comments', 'create'],
-    Permission['admin/stats'], 
+    Permission['comments/create'],
+    Permission['admin/stats/'], 
     ...
   ]
 

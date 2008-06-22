@@ -12,12 +12,32 @@ class PermissionByDefaultTest < Test::Unit::TestCase
   def test_should_not_have_an_action
     assert @permission.action.blank?
   end
+  
+  def test_should_have_a_path
+    assert_equal '/', @permission.path
+  end
+  
+  def test_should_use_controller_as_path_if_not_specified
+    permission = Permission.new(:controller => 'users')
+    assert_equal 'users/', permission.path
+  end
+  
+  def test_should_use_controller_and_action_as_path_if_not_specified
+    permission = Permission.new(:controller => 'users', :action => 'index')
+    assert_equal 'users/index', permission.path
+  end
 end
 
 class PermissionTest < Test::Unit::TestCase
   def test_should_be_valid_with_a_valid_set_of_attributes
     permission = new_permission
     assert permission.valid?
+  end
+  
+  def test_should_require_an_id
+    permission = new_permission(:id => nil)
+    assert !permission.valid?
+    assert_equal 1, Array(permission.errors.on(:id)).size
   end
   
   def test_should_require_a_controller
@@ -37,12 +57,19 @@ class PermissionTest < Test::Unit::TestCase
     assert_equal 1, Array(permission.errors.on(:action)).size
   end
   
-  def test_should_require_a_unique_controller_and_action
+  def test_should_require_a_path
+    permission = new_permission
+    permission.path = nil
+    assert !permission.valid?
+    assert_equal 1, Array(permission.errors.on(:path)).size
+  end
+  
+  def test_should_require_a_unique_path
     permission = create_permission(:controller => 'application')
     
     second_permission = new_permission(:controller => 'application')
     assert !second_permission.valid?
-    assert_equal 1, Array(second_permission.errors.on(:controller)).size
+    assert_equal 1, Array(second_permission.errors.on(:path)).size
   end
   
   def teardown
