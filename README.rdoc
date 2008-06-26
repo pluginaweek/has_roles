@@ -4,21 +4,21 @@
 
 == Resources
 
-Wiki
-
-* http://wiki.pluginaweek.org/Has_roles
-
 API
 
 * http://api.pluginaweek.org/has_roles
 
+Bugs
+
+* http://pluginaweek.lighthouseapp.com/projects/13277-has_roles
+
 Development
 
-* http://dev.pluginaweek.org/browser/trunk/has_roles
+* http://github.com/pluginaweek/has_roles
 
 Source
 
-* http://svn.pluginaweek.org/trunk/has_roles
+* git://github.com/pluginaweek/has_roles.git
 
 == Description
 
@@ -88,7 +88,7 @@ app/views/layouts/application.rhtml:
 == Testing
 
 Before you can run any tests, the following gem must be installed:
-* plugin_test_helper[http://wiki.pluginaweek.org/Plugin_test_helper]
+* plugin_test_helper[http://github.com/pluginaweek/plugin_test_helper]
 
 To run against a specific version of Rails:
 
@@ -97,5 +97,5 @@ To run against a specific version of Rails:
 == Dependencies
 
 * Rails 2.1 or later
-* plugins_plus[http://wiki.pluginaweek.org/Plugins_plus]
-* acts_as_enumeration[http://wiki.pluginaweek.org/Acts_as_enumeration]
+* plugins_plus[http://github.com/pluginaweek/plugins_plus]
+* acts_as_enumeration[http://github.com/pluginaweek/acts_as_enumeration]
