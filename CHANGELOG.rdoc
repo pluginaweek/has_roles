@@ -1,39 +1,28 @@
-*SVN*
+== master
 
-*0.1.1* (June 22nd, 2008)
+== 0.1.1 / 2008-06-22
 
 * Remove log files from gems
-
 * Index permission enumerations by their path
 
-*0.1.0* (May 5th, 2008)
+== 0.1.0 / 2008-05-05
 
 * Add use of named_scope instead of class finders
-
 * Moved storage of controller paths into the Permission model
-
 * Permission and Role are now enumerations (adding dependency on acts_as_enumeration)
-
 * Removed unused helper methods in Permission and Role
-
 * Added default permissions / roles
-
 * Update documentation
 
-*0.0.2* (September 26th, 2007)
+== 0.0.2 / 2007-09-26
 
 * Fix role_assignments unique index having too long a name
-
 * Add workaround for old sqlite versions that can't handle :distinct => true
 
-*0.0.1* (September 5th, 2007)
+== 0.0.1 / 2007-09-05
 
 * Add #role_ids and #role_ids=(new_ids) for models
-
 * Added documentation
-
 * Added helper methods for determining authorization within views
-
 * Added unit tests
-
 * Convert dos newlines to unix newlines
