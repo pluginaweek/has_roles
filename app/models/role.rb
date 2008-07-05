@@ -4,6 +4,7 @@
 class Role < ActiveRecord::Base
   acts_as_enumeration
   
+  # The list of permissions that this role has access to
   attr_accessor :permissions
   
   has_many  :assignments,
@@ -15,7 +16,15 @@ class Role < ActiveRecord::Base
     @permissions = []
   end
   
-  # Is this role authorized for the given url?
+  # Is this role authorized for the given url?  The url can be any one of the
+  # following formats:
+  # * +string+ - A relative or absolute path in the application
+  # * +hash+ - A hash include the controller/action attributes
+  # 
+  # Using this information, the controller and action can be determined.
+  # Authorization is based on whether the role has a permission that either
+  # directly matches the path or represents a parent path (i.e. using the
+  # controller/class hierarchy)
   def authorized_for?(options = '')
     path = Permission.recognize_path(options)
     

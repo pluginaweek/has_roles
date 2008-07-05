@@ -13,14 +13,23 @@ module PluginAWeek #:nodoc:
     #     end
     #   end
     module AuthorizationHelper
-      # Checks if the user is authorized for the url specified by the given options.
-      # See <tt>PluginAWeek::HasRoles::InstanceMethods#authorized_for?</tt> for
-      # a description of the possible options that can be passed in.
+      # Checks if the current user is authorized for the url specified by the
+      # given options. See <tt>PluginAWeek::HasRoles::InstanceMethods#authorized_for?</tt>
+      # for a description of the possible options that can be passed in.
+      # 
+      # If there is no current user, then the authorization will fail.
+      # 
+      # == Examples
+      # 
+      #   authorized_for?(:controller => 'admin/messages')
+      #   authorized_for?(:controller => 'admin/messages', :action => 'destroy')
+      #   authorized_for?('admin/messages')
+      #   authorized_for?('http://localhost:3000/admin/messages')
       def authorized_for?(options = {})
         current_user && current_user.authorized_for?(options)
       end
       
-      # Only link to the url if the user is authorized to access it.  In
+      # Only link to the url if the current user is authorized to access it.  In
       # addition to the options normally available in +link_to+, the following
       # options can be specified:
       # * +show_text+ - If set to true, will only display the text if the user is not authorized for the link. (Default is +false+).

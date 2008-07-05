@@ -10,7 +10,9 @@ module PluginAWeek #:nodoc:
     end
     
     module MacroMethods
-      # Indicates that the model has roles
+      # Indicates that the model has roles. This will create the folliwng
+      # association:
+      # * +role_assignments+ - The join association for roles that have been assigned to a record in this model
       def has_roles
         has_many  :role_assignments,
                     :class_name => 'RoleAssignment',
