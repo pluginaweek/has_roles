@@ -3,12 +3,6 @@ require 'has_roles/authorization_helper'
 module PluginAWeek #:nodoc:
   # Adds a generic implementation for dealing with role management
   module HasRoles
-    def self.included(base) #:nodoc:
-      base.class_eval do
-        extend PluginAWeek::HasRoles::MacroMethods
-      end
-    end
-    
     module MacroMethods
       # Indicates that the model has roles. This will create the folliwng
       # association:
@@ -46,5 +40,5 @@ module PluginAWeek #:nodoc:
 end
 
 ActiveRecord::Base.class_eval do
-  include PluginAWeek::HasRoles
+  extend PluginAWeek::HasRoles::MacroMethods
 end
