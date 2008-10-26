@@ -72,6 +72,20 @@ class PermissionTest < Test::Unit::TestCase
     assert_equal 1, Array(second_permission.errors.on(:path)).size
   end
   
+  def test_should_protect_attributes_from_mass_assignment
+    permission = Permission.new(
+      :id => 123,
+      :controller => 'site',
+      :action => 'about',
+      :path => 'invalid'
+    )
+    
+    assert_equal 123, permission.id
+    assert_equal 'site', permission.controller
+    assert_equal 'about', permission.action
+    assert_equal 'site/about', permission.path
+  end
+  
   def teardown
     Permission.destroy_all
   end

@@ -34,6 +34,18 @@ class RoleTest < Test::Unit::TestCase
     assert_equal 1, Array(second_role.errors.on(:name)).size
   end
   
+  def test_should_protect_attributes_from_mass_assignment
+    role = Role.new(
+      :id => 123,
+      :name => 'developer',
+      :permissions => ['application/']
+    )
+    
+    assert_equal 123, role.id
+    assert_equal 'developer', role.name
+    assert_equal ['application/'], role.permissions
+  end
+  
   def teardown
     Role.destroy_all
   end

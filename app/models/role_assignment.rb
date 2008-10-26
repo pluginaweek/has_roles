@@ -7,4 +7,6 @@ class RoleAssignment < ActiveRecord::Base
   validates_presence_of :role_id,
                         :assignee_id,
                         :assignee_type
+  
+  attr_accessible :role
 end

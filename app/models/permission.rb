@@ -23,11 +23,14 @@ class Permission < ActiveRecord::Base
                             :allow_nil => true
   
   class << self
-   # Is there a permission that exists which restricts the given url?  If there
-   # is no permission that restricts the path, then anyone should be allowed
-   # access to it
+    # Is there a permission that exists which restricts the given url?  If there
+    # is no permission that restricts the path, then anyone should be allowed
+    # access to it
     def restricts?(options = '')
       controller, action = recognize_path(options)
+      
+      # See if a permission exists for either the controller or controller/action
+      # combination.  If it doesn't, then the path isn't restricted
       permission = find_by_path("#{controller}/") || find_by_path("#{controller}/#{action}")
       !permission.nil?
     end
@@ -37,12 +40,15 @@ class Permission < ActiveRecord::Base
     # * +string+ - A relative or absolute path in the application
     # * +hash+ - A hash include the controller/action attributes
     def recognize_path(options = '')
+      # Grab the actual url options if the path is specified
       options = ActionController::Routing::Routes.recognize_path(URI.parse(options).path) if options.is_a?(String)
+      
+      # Only return the controller/action of the url options
       return options[:controller], options[:action] ? options[:action].to_s : 'index'
     end
   end
   
-  def initialize(attributes = {}) #:nodoc:
+  def initialize(attributes = nil) #:nodoc:
     super
     self.path = "#{controller}/#{action}"
   end

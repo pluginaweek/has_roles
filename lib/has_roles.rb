@@ -1,4 +1,5 @@
 require 'has_roles/authorization_helper'
+require 'has_roles/url_helper'
 
 module PluginAWeek #:nodoc:
   # Adds a generic implementation for dealing with role management

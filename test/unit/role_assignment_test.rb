@@ -42,6 +42,22 @@ class RoleAssignmentTest < Test::Unit::TestCase
     assert_equal 1, Array(role_assignment.errors.on(:assignee_type)).size
   end
   
+  def test_should_protect_attributes_from_mass_assignment
+    create_role(:name => 'admin')
+    
+    role_assignment = RoleAssignment.new(
+      :id => 123,
+      :assignee_id => 1,
+      :assignee_type => 'User',
+      :role => 'admin'
+    )
+    
+    assert_nil role_assignment.id
+    assert_nil role_assignment.assignee_id
+    assert_nil role_assignment.assignee_type
+    assert_equal 'admin', role_assignment.role
+  end
+  
   def teardown
     Role.destroy_all
   end

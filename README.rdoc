@@ -47,16 +47,15 @@ config/initializers/role_management:
 To add or update roles, you can either define your own Role model or create an
 initializer like so:
 
-config/initializers/role_management:
+config/initializers/roles.rb:
   # Edit the default role called "administrator"
-  Role[:administrator].permissions << Permission['admin/stats/']
+  Role[:administrator].permissions << 'admin/stats/'
   
   # Create a new role called "developer"
-  Role.create :id => 2, :name => 'developer', :permissions => [
-    Permission['comments/create'],
-    Permission['admin/stats/'], 
-    ...
-  ]
+  Role.create :id => 2, :name => 'developer', :permissions => %w(
+    comments/create
+    admin/stats/
+  )
 
 === Default Permissions/Roles
 
@@ -66,10 +65,10 @@ By default, the following permissions are define:
 By default, the following roles are defined:
 * admin - An administrator with the default permissions
 
-You can get rid of the default permissions/roles by adding the following to your
-role_management initializer:
+You can remove the default permissions/roles by adding the following to your
+initializer:
 
-config/initializers/role_management:
+config/initializers/roles.rb:
   Role.destroy_all
   Permission.destroy_all
   ...

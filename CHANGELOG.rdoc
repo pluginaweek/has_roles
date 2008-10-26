@@ -1,5 +1,8 @@
 == master
 
+* Fix permissions for new roles always defaulting to empty even when it's passed in to the constructor
+* Add authorized?, authorized_required, and authorization_denied helpers
+* Moved authorized_for? helper method into the controller so that it can be used there as well as in views
 * Change how the base module is included to prevent namespacing conflicts
 
 == 0.1.1 / 2008-06-22
