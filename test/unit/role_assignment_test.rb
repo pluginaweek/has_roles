@@ -27,19 +27,19 @@ class RoleAssignmentTest < Test::Unit::TestCase
   def test_should_require_a_role
     role_assignment = new_role_assignment(:role => nil)
     assert !role_assignment.valid?
-    assert_equal 1, Array(role_assignment.errors.on(:role_id)).size
+    assert role_assignment.errors.invalid?(:role_id)
   end
   
   def test_should_require_an_assignee_id
     role_assignment = new_role_assignment(:assignee => nil)
     assert !role_assignment.valid?
-    assert_equal 1, Array(role_assignment.errors.on(:assignee_id)).size
+    assert role_assignment.errors.invalid?(:assignee_id)
   end
   
   def test_should_require_an_assignee_type
     role_assignment = new_role_assignment(:assignee => nil)
     assert !role_assignment.valid?
-    assert_equal 1, Array(role_assignment.errors.on(:assignee_type)).size
+    assert role_assignment.errors.invalid?(:assignee_type)
   end
   
   def test_should_protect_attributes_from_mass_assignment

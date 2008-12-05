@@ -23,7 +23,7 @@ class RoleTest < Test::Unit::TestCase
   def test_should_require_a_name
     role = new_role(:name => nil)
     assert !role.valid?
-    assert_equal 1, Array(role.errors.on(:name)).size
+    assert role.errors.invalid?(:name)
   end
   
   def test_should_require_a_unique_name
@@ -31,7 +31,7 @@ class RoleTest < Test::Unit::TestCase
     
     second_role = new_role(:name => 'admin')
     assert !second_role.valid?
-    assert_equal 1, Array(second_role.errors.on(:name)).size
+    assert second_role.errors.invalid?(:name)
   end
   
   def test_should_protect_attributes_from_mass_assignment

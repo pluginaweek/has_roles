@@ -37,13 +37,13 @@ class PermissionTest < Test::Unit::TestCase
   def test_should_require_an_id
     permission = new_permission(:id => nil)
     assert !permission.valid?
-    assert_equal 1, Array(permission.errors.on(:id)).size
+    assert permission.errors.invalid?(:id)
   end
   
   def test_should_require_a_controller
     permission = new_permission(:controller => nil)
     assert !permission.valid?
-    assert_equal 1, Array(permission.errors.on(:controller)).size
+    assert permission.errors.invalid?(:controller)
   end
   
   def test_should_not_require_an_action
@@ -54,14 +54,14 @@ class PermissionTest < Test::Unit::TestCase
   def test_should_require_at_least_1_character_if_action_is_specified
     permission = new_permission(:action => '')
     assert !permission.valid?
-    assert_equal 1, Array(permission.errors.on(:action)).size
+    assert permission.errors.invalid?(:action)
   end
   
   def test_should_require_a_path
     permission = new_permission
     permission.path = nil
     assert !permission.valid?
-    assert_equal 1, Array(permission.errors.on(:path)).size
+    assert permission.errors.invalid?(:path)
   end
   
   def test_should_require_a_unique_path
@@ -69,7 +69,7 @@ class PermissionTest < Test::Unit::TestCase
     
     second_permission = new_permission(:controller => 'application')
     assert !second_permission.valid?
-    assert_equal 1, Array(second_permission.errors.on(:path)).size
+    assert second_permission.errors.invalid?(:path)
   end
   
   def test_should_protect_attributes_from_mass_assignment
