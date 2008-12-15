@@ -1,5 +1,7 @@
 == master
 
+* Remove the PluginAWeek namespace
+
 == 0.1.2 / 2008-10-26
 
 * Fix permissions for new roles always defaulting to empty even when it's passed in to the constructor

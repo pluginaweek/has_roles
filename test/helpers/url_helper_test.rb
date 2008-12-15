@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UrlHelperUnauthorizedTest < ActionView::TestCase
-  tests PluginAWeek::HasRoles::UrlHelper
+  tests HasRoles::UrlHelper
   
   def test_should_link_to_nothing_if_not_showing_text
     assert_equal '', link_to_if_authorized('Destroy User', '/admin/users/destroy', :show_text => false)
@@ -18,7 +18,7 @@ class UrlHelperUnauthorizedTest < ActionView::TestCase
 end
 
 class UrlHelperAuthorizedTest < ActionView::TestCase
-  tests PluginAWeek::HasRoles::UrlHelper
+  tests HasRoles::UrlHelper
   
   def setup
     @controller = ActionView::TestCase::TestController.new
