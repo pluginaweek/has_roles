@@ -35,14 +35,12 @@ module Factory
   
   build Permission do |attributes|
     attributes.reverse_merge!(
-      :id => 1,
       :controller => 'admin/users'
     )
   end
   
   build Role do |attributes|
     attributes.reverse_merge!(
-      :id => 1,
       :name => 'developer'
     )
   end
@@ -50,6 +48,11 @@ module Factory
   build RoleAssignment do |attributes|
     attributes[:role] = create_role unless attributes.include?(:role)
     attributes[:assignee] = create_user unless attributes.include?(:assignee)
+  end
+  
+  build RolePermission do |attributes|
+    attributes[:permission] = create_permission unless attributes.include?(:permission)
+    attributes[:role] = create_role unless attributes.include?(:role)
   end
   
   build User do |attributes|

@@ -13,5 +13,6 @@ Test::Unit::TestCase.class_eval do
 end
 
 # Remove defaults for testing
-Permission.destroy_all
-Role.destroy_all
+RolePermission.delete_all
+Permission.delete_all
+Role.delete_all

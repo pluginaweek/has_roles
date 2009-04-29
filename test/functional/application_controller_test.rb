@@ -25,8 +25,8 @@ class ControllerLoggedInTest < ActionController::TestCase
     @user = create_user
     @request.session[:user_id] = @user.id
     
-    @permission = create_permission(:controller => 'admin/users')
-    @role = create_role(:name => 'developer', :permissions => ['admin/users/'])
+    @role = create_role(:name => 'developer')
+    create_role_permission(:role => @role, :permission => create_permission(:controller => 'admin/users'))
   end
   
   def test_should_be_successful_if_authorized
@@ -41,10 +41,5 @@ class ControllerLoggedInTest < ActionController::TestCase
     post :destroy, :id => 1
     
     assert_equal '401', @response.code
-  end
-  
-  def teardown
-    Role.destroy_all
-    Permission.destroy_all
   end
 end

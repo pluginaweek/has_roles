@@ -60,10 +60,6 @@ class AuthorizationHelperWithoutPermissionsTest < ActionController::TestCase
   def test_should_not_be_authorized_for_custom_url
     assert !authorized_for?('/admin/users/destroy/1')
   end
-  
-  def teardown
-    Permission.destroy_all
-  end
 end
 
 class AuthorizationHelperWithPermissionsTest < ActionController::TestCase
@@ -81,8 +77,8 @@ class AuthorizationHelperWithPermissionsTest < ActionController::TestCase
     @user = create_user
     session[:user_id] = @user.id
     
-    create_permission(:controller => 'admin/users')
-    role = create_role(:name => 'developer', :permissions => ['admin/users/'])
+    role = create_role(:name => 'developer')
+    create_role_permission(:role => role, :permission => create_permission(:controller => 'admin/users'))
     create_role_assignment(:role => role, :assignee => @user)
   end
   
@@ -92,10 +88,5 @@ class AuthorizationHelperWithPermissionsTest < ActionController::TestCase
   
   def test_should_be_authorized_for_custom_url_if_user_has_proper_permissions
     assert authorized_for?('/admin/users/destroy/1')
-  end
-  
-  def teardown
-    Role.destroy_all
-    Permission.destroy_all
   end
 end

@@ -1,6 +1,6 @@
 module HasRoles
-  # Provides helper methods for conditionally making links depending on whether
-  # the current user is authorized to access the url being linked to.
+  # Provides helper methods for conditionally making links depending on
+  # whether the current user is authorized to access the url being linked to.
   # 
   # In order to determine who the "current user" is, the helper methods
   # assume that a +current_user+ helper has been defined.  An example of an
@@ -19,7 +19,8 @@ module HasRoles
     # Only link to the url if the current user is authorized to access it.  In
     # addition to the options normally available in +link_to+, the following
     # options can be specified:
-    # * +show_text+ - If set to true, will only display the text if the user is not authorized for the link. (Default is +false+).
+    # * +show_text+ - If set to true, will only display the text if the user
+    #   is not authorized for the link. (Default is +false+).
     def link_to_if_authorized(name, options = {}, html_options = {}, &block)
       text_on_no_authorization = html_options.delete(:show_text) ? name : ''
       

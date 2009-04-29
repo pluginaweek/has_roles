@@ -4,14 +4,14 @@ require 'has_roles/url_helper'
 # Adds a generic implementation for dealing with role management
 module HasRoles
   module MacroMethods
-    # Indicates that the model has roles. This will create the folliwng
-    # association:
-    # * +role_assignments+ - The join association for roles that have been assigned to a record in this model
+    # Indicates that the model has roles. This will create the following
+    # associations:
+    # * +role_assignments+ - The join association for roles that have been
+    #   assigned to a record in this model
+    # * +roles+ - The actual roles through the join association
     def has_roles
-      has_many  :role_assignments,
-                  :class_name => 'RoleAssignment',
-                  :as => :assignee,
-                  :dependent => :destroy
+      has_many :role_assignments, :class_name => 'RoleAssignment', :as => :assignee, :dependent => :destroy
+      has_many :roles, :through => :role_assignments
       
       include HasRoles::InstanceMethods
     end
@@ -28,12 +28,7 @@ module HasRoles
     #   user.authorized_for?('admin/messages')
     #   user.authorized_for?('http://localhost:3000/admin/messages')
     def authorized_for?(options = '')
-      !Permission.restricts?(options) || roles.any? {|role| role.authorized_for?(options)}
-    end
-    
-    # All of the roles currently assigned
-    def roles
-      role_assignments.map(&:role)
+      !Permission.restricts?(options) || roles.authorized_for(options).exists?
     end
   end
 end

@@ -22,10 +22,11 @@ Source
 
 == Description
 
-One of the easiest and most straightforward techniques for adding role management
-and authorization to specific parts of your application is restricting usage on
-controller/action-basis.  Each role defined in your system is mapped to one or
-more permissions.  Each permission is a combination of a controller and action.
+One of the easiest and most straightforward techniques for adding role
+management and authorization to specific parts of your application is
+restricting usage on a controller/action-basis.  Each role defined in your
+system is mapped to one or more permissions.  Each permission is a combination
+of a controller and action.
 
 == Usage
 
@@ -34,49 +35,41 @@ modified for your own usage.
 
 === Adding permissions
 
-To add permissions, you can either define your own Permission model or create
-an initializer like so:
+To add permissions, you can create an initializer like so:
 
-config/initializers/role_management:
-  Permission.create :id => 2, :controller => 'admin/stats'
-  Permission.create :id => 3, :controller => 'comments', :action => 'create'
-  ...
+config/initializers/permissions.rb:
 
-=== Adding/Updating roles
-
-To add or update roles, you can either define your own Role model or create an
-initializer like so:
-
-config/initializers/roles.rb:
-  # Edit the default role called "administrator"
-  Role[:administrator].permissions << 'admin/stats/'
-  
-  # Create a new role called "developer"
-  Role.create :id => 2, :name => 'developer', :permissions => %w(
-    comments/create
-    admin/stats/
+  Permission.bootstrap(
+    {:id => 1, :controller => 'application'},
+    {:id => 2, :controller => 'admin/stats'},
+    {:id => 3, :controller => 'comments', :action => 'create'},
+    ...
   )
 
-=== Default Permissions/Roles
+=== Adding / Updating roles
 
-By default, the following permissions are define:
-* application - Permission for accessing any part of the application
-
-By default, the following roles are defined:
-* admin - An administrator with the default permissions
-
-You can remove the default permissions/roles by adding the following to your
-initializer:
+To add / update roles, you can create an initializer like so:
 
 config/initializers/roles.rb:
-  Role.destroy_all
-  Permission.destroy_all
-  ...
+
+  Role.bootstrap(
+    {:id => 1, :name => 'admin'},
+    {:id => 2, :name => 'developer'},
+    ...
+  )
+  
+  RolePermission.bootstrap(
+    {:role => 'admin', :permission => 'application/'},
+    {:role => 'admin', :permission => 'admin/states/'},
+    {:role => 'developer', :permission => 'comments/create'},
+    {:role => 'developer', :permission => 'admin/stats/'},
+    ...
+  )
 
 === Checking a user's authorization
 
-Below is an example of checking a user's authorization for a url before displaying
-information:
+Below is an example of checking a user's authorization for a url before
+displaying information:
 
 app/views/layouts/application.rhtml:
 
@@ -95,6 +88,5 @@ To run against a specific version of Rails:
 
 == Dependencies
 
-* Rails 2.1 or later
-* acts_as_enumeration[http://github.com/pluginaweek/acts_as_enumeration]
-* plugins_plus[http://github.com/pluginaweek/plugins_plugins] (optional if app files are copied to your project tree)
+* Rails 2.3 or later
+* enumerate_by[http://github.com/pluginaweek/enumerate_by]

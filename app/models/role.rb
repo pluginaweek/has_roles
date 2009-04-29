@@ -1,41 +1,19 @@
 # A role defines a group of users in the system who are able to access a
-# collection of features in the application.  Examples of roles could be
-# 'Administrator', 'Developer', or 'Guest'.
+# collection of features in the application.
 # 
-# == Adding permissions
+# == Examples
 # 
-# The features that a role has access to is dependent on the permissions that
-# have been assigned to the role.
-# 
-# To add permissions to an existing role, such as the administrator role
-# pre-defined in this model:
-# 
-#   Role[:administrator].permissions << 'admin/stats/'
-# 
-# To assigns permissions to a new role:
-# 
-#   Role.create :id => 2, :name => 'developer', :permissions => %w(
-#     comments/create
-#     admin/stats/
+#   Role.bootstrap(
+#     {:id => 1, :name => 'administrator'},
+#     {:id => 2, :name => 'developer'},
+#     {:id => 3, :name => 'guest'}
 #   )
-# 
-# Notice that permissions are in the form of the path defined by the
-# controller/action.
 class Role < ActiveRecord::Base
-  acts_as_enumeration
+  enumerate_by :name
   
-  # The list of permissions that this role has access to
-  attr_accessor :permissions
-  
-  has_many  :assignments,
-              :class_name => 'RoleAssignment'
-  
-  def initialize(attributes = nil) #:nodoc:
-    super
-    
-    @permissions ||= []
-    @authorizations = {}
-  end
+  has_many :assigned_permissions, :class_name => 'RolePermission'
+  has_many :permissions, :through => :assigned_permissions
+  has_many :assignments, :class_name => 'RoleAssignment'
   
   # Is this role authorized for the given url?  The url can be any one of the
   # following formats:
@@ -46,23 +24,15 @@ class Role < ActiveRecord::Base
   # Authorization is based on whether the role has a permission that either
   # directly matches the path or represents a parent path (i.e. using the
   # controller/class hierarchy)
-  def authorized_for?(options = '')
-    path = Permission.recognize_path(options)
+  named_scope :authorized_for, lambda {|*args|
+    options = args.first || ''
+    controller, action = Permission.recognize_path(options)
+    controllers = "#{controller.camelize}Controller".constantize.ancestors.select {|c| c < ActionController::Base}.map(&:controller_path)
     
-    if (authorized = @authorizations[path]).nil?
-      controller, action = path
-      
-      # Include parent controllers for inheritance support
-      controllers = "#{controller.camelize}Controller".constantize.ancestors.select {|c| c < ActionController::Base}.map(&:controller_path)
-      
-      authorized = @authorizations[path] = permissions.any? do |permission|
-        permission = Permission[permission] unless permission.is_a?(Permission)
-        controllers.include?(permission.controller) && (!permission.action? || permission.action == action)
-      end
-    end
-    
-    authorized
-  end
+    {:joins => :permissions, :conditions => ['permissions.controller IN (?) AND (permissions.action IS NULL OR permissions.action = ?)', controllers, action]}
+  }
   
-  create :id => 1, :name => 'admin', :permissions => %w(application/)
+  bootstrap(
+    {:id => 1, :name => 'admin'}
+  )
 end

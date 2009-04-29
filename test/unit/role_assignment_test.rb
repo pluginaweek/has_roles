@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RoleAssignmentByDefaultTest < Test::Unit::TestCase
+class RoleAssignmentByDefaultTest < ActiveRecord::TestCase
   def setup
     @role_assignment = RoleAssignment.new
   end
@@ -18,7 +18,7 @@ class RoleAssignmentByDefaultTest < Test::Unit::TestCase
   end
 end
 
-class RoleAssignmentTest < Test::Unit::TestCase
+class RoleAssignmentTest < ActiveRecord::TestCase
   def test_should_be_valid_with_a_valid_set_of_attributes
     role_assignment = new_role_assignment
     assert role_assignment.valid?
@@ -56,9 +56,5 @@ class RoleAssignmentTest < Test::Unit::TestCase
     assert_nil role_assignment.assignee_id
     assert_nil role_assignment.assignee_type
     assert_equal 'admin', role_assignment.role
-  end
-  
-  def teardown
-    Role.destroy_all
   end
 end

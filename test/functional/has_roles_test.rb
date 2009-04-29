@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class UserAfterBeingCreatedTest < Test::Unit::TestCase
+class UserAfterBeingCreatedTest < ActiveRecord::TestCase
   def setup
     @user = create_user
   end
@@ -14,7 +14,7 @@ class UserAfterBeingCreatedTest < Test::Unit::TestCase
   end
 end
 
-class UserWithoutRoleAssignmentsTest < Test::Unit::TestCase
+class UserWithoutRoleAssignmentsTest < ActiveRecord::TestCase
   def setup
     @user = create_user
   end
@@ -27,20 +27,14 @@ class UserWithoutRoleAssignmentsTest < Test::Unit::TestCase
     create_permission(:controller => 'users', :action => 'create')
     assert !@user.authorized_for?('/users/create')
   end
-  
-  def teardown
-    Permission.destroy_all
-  end
 end
 
-class UserWithRoleAssignmentsTest < Test::Unit::TestCase
+class UserWithRoleAssignmentsTest < ActiveRecord::TestCase
   def setup
     @user = create_user
     @administrator = create_role(:name => 'administrator')
-    @administrator.permissions << create_permission(:id => 1, :controller => 'admin/users')
+    create_role_permission(:role => @administrator, :permission => create_permission(:controller => 'admin/users'))
     create_role_assignment(:assignee => @user, :role => @administrator)
-    
-    create_permission(:id => 2, :controller => 'users')
   end
   
   def test_should_have_roles
@@ -56,16 +50,12 @@ class UserWithRoleAssignmentsTest < Test::Unit::TestCase
   end
   
   def test_should_not_be_authorized_if_no_roles_have_permission
+    create_permission(:controller => 'users')
     assert !@user.authorized_for?('/users')
-  end
-  
-  def teardown
-    Role.destroy_all
-    Permission.destroy_all
   end
 end
 
-class UserAfterBeingDestroyedTest < Test::Unit::TestCase
+class UserAfterBeingDestroyedTest < ActiveRecord::TestCase
   def setup
     @user = create_user
     @administrator = create_role_assignment(:assignee => @user)
@@ -74,9 +64,5 @@ class UserAfterBeingDestroyedTest < Test::Unit::TestCase
   
   def test_should_destroy_associated_role_assignments
     assert_nil RoleAssignment.find_by_id(@administrator.id)
-  end
-  
-  def teardown
-    Role.destroy_all
   end
 end

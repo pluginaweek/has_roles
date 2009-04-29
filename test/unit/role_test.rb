@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RoleByDefaultTest < Test::Unit::TestCase
+class RoleByDefaultTest < ActiveRecord::TestCase
   def setup
     @role = Role.new
   end
@@ -8,13 +8,9 @@ class RoleByDefaultTest < Test::Unit::TestCase
   def test_should_not_have_a_name
     assert @role.name.blank?
   end
-  
-  def test_should_not_have_any_permissions
-    assert @role.permissions.empty?
-  end
 end
 
-class RoleTest < Test::Unit::TestCase
+class RoleTest < ActiveRecord::TestCase
   def test_should_be_valid_with_a_valid_set_of_attributes
     role = new_role
     assert role.valid?
@@ -33,106 +29,46 @@ class RoleTest < Test::Unit::TestCase
     assert !second_role.valid?
     assert second_role.errors.invalid?(:name)
   end
-  
-  def test_should_protect_attributes_from_mass_assignment
-    role = Role.new(
-      :id => 123,
-      :name => 'developer',
-      :permissions => ['application/']
-    )
-    
-    assert_equal 123, role.id
-    assert_equal 'developer', role.name
-    assert_equal ['application/'], role.permissions
-  end
-  
-  def teardown
-    Role.destroy_all
-  end
 end
 
-class RoleAfterBeingCreatedTest < Test::Unit::TestCase
+class RoleAfterBeingCreatedTest < ActiveRecord::TestCase
   def setup
     @role = create_role
+  end
+  
+  def test_should_not_have_any_assigned_permissions
+    assert @role.permissions.empty?
+  end
+  
+  def test_should_not_have_any_permissions
+    assert @role.permissions.empty?
   end
   
   def test_should_not_have_any_assignments
     assert @role.assignments.empty?
   end
-  
-  def teardown
-    Role.destroy_all
-  end
 end
 
-class RoleWithPermissionsTest < Test::Unit::TestCase
+class RoleWithPermissionsTest < ActiveRecord::TestCase
   def setup
-    @role = new_role
-    @permission_create = create_permission(:id => 1, :controller => 'users', :action => 'create')
-    @permission_update = create_permission(:id => 2, :controller => 'users', :action => 'update')
+    @role = create_role
+    @permission_create = create_permission(:controller => 'users', :action => 'create')
+    @permission_update = create_permission(:controller => 'users', :action => 'update')
     
-    @role.permissions.concat([@permission_create, @permission_update])
-    @role.save!
+    create_role_permission(:role => @role, :permission => @permission_create)
+    create_role_permission(:role => @role, :permission => @permission_update)
+  end
+  
+  def test_should_have_assigned_permissions
+    assert_equal [@permission_create, @permission_update], @role.assigned_permissions.map(&:permission)
   end
   
   def test_should_have_permissions
     assert_equal [@permission_create, @permission_update], @role.permissions
   end
-  
-  def test_should_authorize_for_a_relative_url
-    assert @role.authorized_for?('/users/create')
-  end
-  
-  def test_should_not_authorize_for_a_relative_url_if_not_permissioned
-    assert !@role.authorized_for?('/admin/users/create')
-  end
-  
-  def test_should_authorize_for_an_absolute_url
-    assert @role.authorized_for?('http://localhost:3000/users/create')
-  end
-  
-  def test_should_not_authorize_for_an_absolute_url_if_not_permissioned
-    assert !@role.authorized_for?('http://localhost:3000/users/edit')
-  end
-  
-  def test_should_authorize_for_a_controller
-    @role.permissions << create_permission(:id => 3, :controller => 'users')
-    assert @role.authorized_for?(:controller => 'users')
-  end
-  
-  def test_should_not_authorize_for_a_controller_if_not_permissioned
-    assert !@role.authorized_for?(:controller => 'admin/users')
-  end
-  
-  def test_should_authorize_for_a_controller_and_action
-    assert @role.authorized_for?(:controller => 'users', :action => 'create')
-  end
-  
-  def test_should_not_authorize_for_a_controller_and_action_if_not_permissioned
-    assert !@role.authorized_for?(:controller => 'users', :action => 'edit')
-  end
-  
-  def test_should_authorize_for_the_entire_application
-    @role.permissions << create_permission(:id => 3, :controller => 'application')
-    assert @role.authorized_for?(:controller => 'application')
-  end
-  
-  def test_should_not_authorize_for_the_entire_application_if_not_permissioned
-    assert !@role.authorized_for?(:controller => 'application')
-  end
-  
-  def test_should_authorize_if_permissioned_for_superclass_controller
-    @role.permissions << create_permission(:id => 3, :controller => 'admin/base')
-    assert @role.authorized_for?('/admin/users')
-  end
-  
-  def teardown
-    Role.destroy_all
-    Permission.destroy_all
-  end
 end
 
-class RoleWithAssignmentsTest < Test::Unit::TestCase
+class RoleWithAssignmentsTest < ActiveRecord::TestCase
   def setup
     @role = create_role
     
@@ -143,8 +79,62 @@ class RoleWithAssignmentsTest < Test::Unit::TestCase
   def test_should_have_assignments
     assert_equal [@administrator, @developer], @role.assignments
   end
+end
+
+class RoleAuthorizedForScopeTest < ActiveRecord::TestCase
+  def setup
+    @role = create_role
+    @permission_create = create_permission(:controller => 'users', :action => 'create')
+    @permission_update = create_permission(:controller => 'users', :action => 'update')
+    
+    create_role_permission(:role => @role, :permission => @permission_create)
+    create_role_permission(:role => @role, :permission => @permission_update)
+  end
   
-  def teardown
-    Role.destroy_all
+  def test_should_authorize_for_a_relative_url
+    assert_equal [@role], Role.authorized_for('/users/create')
+  end
+  
+  def test_should_not_authorize_for_a_relative_url_if_not_permissioned
+    assert_equal [], Role.authorized_for('/admin/users/create')
+  end
+  
+  def test_should_authorize_for_an_absolute_url
+    assert_equal [@role], Role.authorized_for('http://localhost:3000/users/create')
+  end
+  
+  def test_should_not_authorize_for_an_absolute_url_if_not_permissioned
+    assert_equal [], Role.authorized_for('http://localhost:3000/users/edit')
+  end
+  
+  def test_should_authorize_for_a_controller
+    create_role_permission(:role => @role, :permission => create_permission(:controller => 'users'))
+    assert_equal [@role], Role.authorized_for(:controller => 'users')
+  end
+  
+  def test_should_not_authorize_for_a_controller_if_not_permissioned
+    assert_equal [], Role.authorized_for(:controller => 'admin/users')
+  end
+  
+  def test_should_authorize_for_a_controller_and_action
+    assert_equal [@role], Role.authorized_for(:controller => 'users', :action => 'create')
+  end
+  
+  def test_should_not_authorize_for_a_controller_and_action_if_not_permissioned
+    assert_equal [], Role.authorized_for(:controller => 'users', :action => 'edit')
+  end
+  
+  def test_should_authorize_for_the_entire_application
+    create_role_permission(:role => @role, :permission => create_permission(:controller => 'application'))
+    assert_equal [@role], Role.authorized_for(:controller => 'application')
+  end
+  
+  def test_should_not_authorize_for_the_entire_application_if_not_permissioned
+    assert_equal [], Role.authorized_for(:controller => 'application')
+  end
+  
+  def test_should_authorize_if_permissioned_for_superclass_controller
+    create_role_permission(:role => @role, :permission => create_permission(:controller => 'admin/base'))
+    assert_equal [@role], Role.authorized_for('/admin/users')
   end
 end
