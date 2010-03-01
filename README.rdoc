@@ -33,6 +33,17 @@ of a controller and action.
 Note that this is a reference implementation and, most likely, should be
 modified for your own usage.
 
+=== Installation
+
++has_roles+ requires additional database tables to work.  You can generate
+a migration for these tables like so:
+
+  script/generate has_roles
+
+Then simply migrate your database:
+
+  rake db:migrate
+
 === Adding permissions
 
 To add permissions, you can create an initializer like so:
