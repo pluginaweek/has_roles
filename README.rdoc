@@ -6,7 +6,7 @@
 
 API
 
-* http://api.pluginaweek.org/has_roles
+* http://rdoc.info/projects/pluginaweek/has_roles
 
 Bugs
 
