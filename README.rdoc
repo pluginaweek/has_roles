@@ -6,7 +6,7 @@
 
 API
 
-* http://rdoc.info/projects/pluginaweek/has_roles
+* http://rdoc.info/github/pluginaweek/has_roles/master/frames
 
 Bugs
 
