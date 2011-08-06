@@ -10,7 +10,7 @@ API
 
 Bugs
 
-* http://pluginaweek.lighthouseapp.com/projects/13277-has_roles
+* http://github.com/pluginaweek/has_roles/issues
 
 Development
 
