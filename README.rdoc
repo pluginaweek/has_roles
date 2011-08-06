@@ -20,6 +20,10 @@ Source
 
 * git://github.com/pluginaweek/has_roles.git
 
+Mailing List
+
+* http://groups.google.com/group/pluginaweek-talk
+
 == Description
 
 One of the easiest and most straightforward techniques for adding role
